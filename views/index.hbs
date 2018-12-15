@@ -1,0 +1,11 @@
+<body>
+    <div class='container'>
+        <h2>Articles</h2>
+        {{#each articles}}
+        <ul class='list-group'>
+            <li class='list-group-item'> <a href="/article/{{this._id}}"> {{this.title}} </a></li>
+        </ul>
+        {{/each}}
+    </div>
+</body>
+

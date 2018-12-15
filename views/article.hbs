@@ -1,0 +1,12 @@
+<body>
+    <div class='container'>
+        <h1>Article details</h1>
+        <h3> {{article.title}}</h3>
+        <h5> Written by {{article.author}}</h5>
+        <p> {{article.body}}</p>
+        <a type="button" class="btn primary" href="/article/{{article._id}}/edit"> Edit Article </a>
+        <form action="/article/{{article._id}}/delete" method="post">
+            <button type="submit">Delete article</button>
+        </form>
+    </div>
+</body>
