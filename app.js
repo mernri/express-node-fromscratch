@@ -26,6 +26,7 @@ const app = express();
 
 // Bring in Models
 let Article = require("./models/article");
+let User = require("./models/user");
 
 // Load view engine
 app.set("views", path.join(__dirname, "views"));
@@ -56,6 +57,9 @@ app.get("/", (req, res, next) => {
 // Route Files
 let articles = require('./routes/articles');
 app.use('/articles', articles)
+
+let users = require('./routes/users');
+app.use('/users', users)
 
 //Start server
 app.listen(3000, () => {
