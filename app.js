@@ -3,25 +3,24 @@ const path = require("path");
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const hbs = require('hbs');
+const flash = require('connect-flash');
 const config = require('./config/database');
 const passport = require('passport');
+const session = require('express-session');
 
 
-// Connect to mongoose and check if there's a db error
-mongoose
-  .connect(
-    config.database,
-    { useNewUrlParser: true }
-  )
-  .then(x => {
-    console.log(
-      `Connected to Mongo! Database name: "${x.connections[0].name}"`
-    );
-  })
-  .catch(err => {
-    console.error("Error connecting to mongo", err);
-  });
+mongoose.connect(config.database);
+let db = mongoose.connection;
+
+// Check connection
+db.once('open', function(){
+  console.log('Connected to MongoDB');
+})
+
+// Check for DB errors 
+db.on('error', function(err) {
+  console.log(err);
+})
 
 // Init app
 const app = express();
@@ -39,18 +38,21 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// Set Public Folder (containing static assets like CSS, images...)
+app.use(express.static(path.join(__dirname,'public')));
 
 // Passport config 
 require('./config/passport')(passport);
+
+// Passport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
 app.get('*', function(req, res, next) {
   res.locals.user = req.user || null;
   next();
 })
 
-// Set Public Folder (containing static assets like CSS, images...)
-app.use(express.static(path.join(__dirname,'public')));
 
 // Home Route
 app.get("/", (req, res, next) => {
