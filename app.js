@@ -4,12 +4,14 @@ const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const hbs = require('hbs');
+const config = require('./config/database');
+const passport = require('passport');
 
 
 // Connect to mongoose and check if there's a db error
 mongoose
   .connect(
-    "mongodb://localhost/node-knowledgebase",
+    config.database,
     { useNewUrlParser: true }
   )
   .then(x => {
@@ -36,6 +38,16 @@ app.set("view engine", "hbs");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+
+// Passport config 
+require('./config/passport')(passport);
+app.use(passport.initialize());
+app.use(passport.session());
+app.get('*', function(req, res, next) {
+  res.locals.user = req.user || null;
+  next();
+})
 
 // Set Public Folder (containing static assets like CSS, images...)
 app.use(express.static(path.join(__dirname,'public')));
